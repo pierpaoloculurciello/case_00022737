@@ -18,6 +18,7 @@ jobs:
       uses: sysdiglabs/scan-action@v3
       with:
         image-tag: "my_image:latest"
+        sysdig-secure-url: https://us2.app.sysdig.com
         sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
         input-type: docker-daemon
         run-as-user: root
@@ -26,7 +27,7 @@ jobs:
       uses: trstringer/manual-approval@v1.9.0
       with:
         secret: ${{ github.TOKEN }}
-        approvers: <github-users or group>
+        approvers: pierpaoloculurciello
         minimum-approvals: 1
         issue-title: Approve Image Push
         issue-body: Please review and approve the image push to the registry
