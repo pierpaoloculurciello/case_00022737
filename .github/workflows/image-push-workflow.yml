@@ -1,0 +1,34 @@
+name: Image Push Workflow
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build_and_push:
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build image
+      run: docker build -t my_image:latest .
+    - name: Scan image
+      id: scan
+      uses: sysdiglabs/scan-action@v3
+      with:
+        image-tag: "my_image:latest"
+        sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
+        input-type: docker-daemon
+        run-as-user: root
+    - name: Approval
+      id: approval
+      uses: trstringer/manual-approval@v1.9.0
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: <github-users or group>
+        minimum-approvals: 1
+        issue-title: Approve Image Push
+        issue-body: Please review and approve the image push to the registry
+    - name: Push image
+      run: docker push my_image:latest
